@@ -91,7 +91,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
         "*** YOUR CODE HERE ***"
         s = 0
-        for ns, p in self.mdp.getPossibleActions(state, action):
+        for ns, p in self.mdp.getTransitionStatesAndProbs(state, action):
             r = self.mdp.getReward(state, action, ns)
             s += p * (r + self.discount * self.values[ns])
         return s
