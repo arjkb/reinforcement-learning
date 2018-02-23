@@ -90,7 +90,12 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        s = 0
+        for ns, p in mdp.getPossibleActions(state, action):
+            r = mdp.getReward(state, action, ns)
+            s += p * (r + self.discount * self.values[ns])
+        return s
+        # util.raiseNotDefined()
 
     def computeActionFromValues(self, state):
         """
