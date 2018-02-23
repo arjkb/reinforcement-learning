@@ -14,6 +14,8 @@
 
 import mdp, util
 
+import sys
+
 from learningAgents import ValueEstimationAgent
 
 class ValueIterationAgent(ValueEstimationAgent):
@@ -45,14 +47,33 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
-        print " States: ", mdp.getStates()
-        for state in mdp.getStates():
-            print " Actions from state {} = {}".format(state, mdp.getPossibleActions(state))
-            for action in mdp.getPossibleActions(state):
-                print " T({}, {}) = {}".format(state, action, mdp.getTransitionStatesAndProbs(state, action))
-                # nextState, _ = mdp.getTransitionStatesAndProbs(state, action)
-                for ns, _ in mdp.getTransitionStatesAndProbs(state, action):
-                    print " R({}, {}, {}) = {}".format(state, action, ns, mdp.getReward(state, action, ns))
+        # print " States: ", mdp.getStates()
+        # for state in mdp.getStates():
+        #     print " Actions from state {} = {}".format(state, mdp.getPossibleActions(state))
+        #     for action in mdp.getPossibleActions(state):
+        #         print " T({}, {}) = {}".format(state, action, mdp.getTransitionStatesAndProbs(state, action))
+        #         # nextState, _ = mdp.getTransitionStatesAndProbs(state, action)
+        #         for ns, _ in mdp.getTransitionStatesAndProbs(state, action):
+        #             print " R({}, {}, {}) = {}".format(state, action, ns, mdp.getReward(state, action, ns))
+
+        for st in mdp.getStates():
+            q = list()
+            for ac in mdp.getPossibleActions(st):
+                s = 0
+                print " possible actions ({}): {}".format(st, mdp.getPossibleActions(st))
+
+                # probabilities of ending up in ns after taking action ac
+                for ns, p in mdp.getTransitionStatesAndProbs(st, ac):
+                    r = mdp.getReward(st, ac, ns)
+                    s += p * (r + self.discount * self.values[ns])
+                    print " ({}, {}) ns={} t={}, r={}, s={}".format(st, ac, ns, p, r, s)
+                q.append(s)
+
+            max_q = max(q) if (len(q) > 0) else 0
+            self.values[st] = max_q
+            print " q: {}, max(q)={}".format(q, max_q)
+
+        print " values: ", self.values
 
 
 
