@@ -56,25 +56,25 @@ class ValueIterationAgent(ValueEstimationAgent):
         #         for ns, _ in mdp.getTransitionStatesAndProbs(state, action):
         #             print " R({}, {}, {}) = {}".format(state, action, ns, mdp.getReward(state, action, ns))
 
-        for st in self.mdp.getStates():
-            q = list()
-            for ac in self.mdp.getPossibleActions(st):
-                s = 0
-                print " possible actions ({}): {}".format(st, self.mdp.getPossibleActions(st))
 
-                # probabilities of ending up in ns after taking action ac
-                for ns, p in self.mdp.getTransitionStatesAndProbs(st, ac):
-                    r = self.mdp.getReward(st, ac, ns)
-                    s += p * (r + self.discount * self.values[ns])
-                    print " ({}, {}) ns={} t={}, r={}, s={}".format(st, ac, ns, p, r, s)
-                q.append(s)
+        for i in range(iterations):
+            for st in self.mdp.getStates():
+                q = list()
+                for ac in self.mdp.getPossibleActions(st):
+                    s = 0
+                    print " possible actions ({}): {}".format(st, self.mdp.getPossibleActions(st))
 
-            max_q = max(q) if (len(q) > 0) else 0
-            self.values[st] = max_q
-            print " q: {}, max(q)={}".format(q, max_q)
+                    # probabilities of ending up in ns after taking action ac
+                    for ns, p in self.mdp.getTransitionStatesAndProbs(st, ac):
+                        r = self.mdp.getReward(st, ac, ns)
+                        s += p * (r + self.discount * self.values[ns])
+                        print " ({}, {}) ns={} t={}, r={}, s={}".format(st, ac, ns, p, r, s)
+                    q.append(s)
 
+                max_q = max(q) if (len(q) > 0) else 0
+                self.values[st] = max_q
+                print " q: {}, max(q)={}".format(q, max_q)
         print " values: ", self.values
-
 
 
     def getValue(self, state):
