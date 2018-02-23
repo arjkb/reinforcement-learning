@@ -107,7 +107,8 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
+        return 'north'
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
