@@ -45,6 +45,8 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.iterations = iterations
         self.values = util.Counter() # A Counter is a dict with default 0
 
+        self.actions = dict()
+
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
         # print " States: ", mdp.getStates()
@@ -56,25 +58,31 @@ class ValueIterationAgent(ValueEstimationAgent):
         #         for ns, _ in mdp.getTransitionStatesAndProbs(state, action):
         #             print " R({}, {}, {}) = {}".format(state, action, ns, mdp.getReward(state, action, ns))
 
-
+        # print " Start State: ", self.mdp.getStartState()
+        d = self.discount
+        r = self.mdp.getReward
         for i in range(iterations):
             for st in self.mdp.getStates():
                 q = list()
                 for ac in self.mdp.getPossibleActions(st):
                     s = 0
-                    print " possible actions ({}): {}".format(st, self.mdp.getPossibleActions(st))
+                    # print " possible actions ({}): {}".format(st, self.mdp.getPossibleActions(st))
+                    s = sum(map(lambda (ns, p): p * (r(st, ac, ns) + d * self.values[ns]) , self.mdp.getTransitionStatesAndProbs(st, ac)))
 
-                    # probabilities of ending up in ns after taking action ac
-                    for ns, p in self.mdp.getTransitionStatesAndProbs(st, ac):
-                        r = self.mdp.getReward(st, ac, ns)
-                        s += p * (r + self.discount * self.values[ns])
-                        print " ({}, {}) ns={} t={}, r={}, s={}".format(st, ac, ns, p, r, s)
-                    q.append(s)
+                    # # probabilities of ending up in ns after taking action ac
+                    # for ns, p in self.mdp.getTransitionStatesAndProbs(st, ac):
+                    #     r = self.mdp.getReward(st, ac, ns)
+                    #     s += p * (r + self.discount * self.values[ns])
+                    #     # print " ({}, {}) ns={} t={}, r={}, s={}".format(st, ac, ns, p, r, s)
+                    print " SUM == ", s
+                    # q.append((s, ac))
 
-                max_q = max(q) if (len(q) > 0) else 0
+                max_q, max_ac = max(q, key=lambda x: x[0]) if (len(q) > 0) else (0, None)
                 self.values[st] = max_q
-                print " q: {}, max(q)={}".format(q, max_q)
+                self.actions[st] = max_ac
+                # print " q: {}, max(q)={}, max_action={}".format(q, max_q, max_ac)
         print " values: ", self.values
+        print " actions: ", self.actions
 
 
     def getValue(self, state):
@@ -90,6 +98,7 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
+        print " Computing Q value for state = {}, action = {} ".format(state, action)
         s = 0
         for ns, p in self.mdp.getTransitionStatesAndProbs(state, action):
             r = self.mdp.getReward(state, action, ns)
@@ -108,6 +117,31 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
+        print " Computing action for state ", state
+
+        max_action = None
+        max_value = -sys.maxint
+
+        for action in self.mdp.getPossibleActions(state):
+            for ns, _ in self.mdp.getTransitionStatesAndProbs(state, action):
+                print " ns={}, v={}".format(ns, self.values[ns])
+
+                if self.values[ns] > max_value:
+                    max_value = self.values[ns]
+                    max_action = action
+
+
+        print " A = {}, V = {}".format(max_action, max_value)
+        if self.mdp.isTerminal(state):
+            return None
+
+        return max_action
+
+        if state not in self.actions:
+            return None
+            print " {} Not Found!".format(state)
+
+        return self.actions[state]
         return 'north'
 
     def getPolicy(self, state):
