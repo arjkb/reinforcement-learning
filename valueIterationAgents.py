@@ -75,7 +75,7 @@ class ValueIterationAgent(ValueEstimationAgent):
                     #     s += p * (r + self.discount * self.values[ns])
                     #     # print " ({}, {}) ns={} t={}, r={}, s={}".format(st, ac, ns, p, r, s)
                     print " SUM == ", s
-                    # q.append((s, ac))
+                    q.append((s, ac))
 
                 max_q, max_ac = max(q, key=lambda x: x[0]) if (len(q) > 0) else (0, None)
                 self.values[st] = max_q
