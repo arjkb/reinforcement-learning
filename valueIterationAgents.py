@@ -65,7 +65,6 @@ class ValueIterationAgent(ValueEstimationAgent):
             for st in self.mdp.getStates():
                 q = list()
                 for ac in self.mdp.getPossibleActions(st):
-                    s = 0
                     # print " possible actions ({}): {}".format(st, self.mdp.getPossibleActions(st))
                     s = sum(map(lambda (ns, p): p * (r(st, ac, ns) + d * self.values[ns]) , self.mdp.getTransitionStatesAndProbs(st, ac)))
                     print " SUM == ", s
