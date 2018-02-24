@@ -137,12 +137,12 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         return max_action
 
-        if state not in self.actions:
-            return None
-            print " {} Not Found!".format(state)
-
-        return self.actions[state]
-        return 'north'
+        # if state not in self.actions:
+        #     return None
+        #     print " {} Not Found!".format(state)
+        #
+        # return self.actions[state]
+        # return 'north'
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
