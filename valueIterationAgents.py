@@ -49,31 +49,19 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
-        # print " States: ", mdp.getStates()
-        # for state in mdp.getStates():
-        #     print " Actions from state {} = {}".format(state, mdp.getPossibleActions(state))
-        #     for action in mdp.getPossibleActions(state):
-        #         print " T({}, {}) = {}".format(state, action, mdp.getTransitionStatesAndProbs(state, action))
-        #         # nextState, _ = mdp.getTransitionStatesAndProbs(state, action)
-        #         for ns, _ in mdp.getTransitionStatesAndProbs(state, action):
-        #             print " R({}, {}, {}) = {}".format(state, action, ns, mdp.getReward(state, action, ns))
-
-        # print " Start State: ", self.mdp.getStartState()
         d = self.discount
         r = self.mdp.getReward
-        for i in range(iterations):
+        for i in range(self.iterations):
+            # q = list()
             for st in self.mdp.getStates():
                 q = list()
                 for ac in self.mdp.getPossibleActions(st):
                     # print " possible actions ({}): {}".format(st, self.mdp.getPossibleActions(st))
                     s = sum(map(lambda (ns, p): p * (r(st, ac, ns) + d * self.values[ns]) , self.mdp.getTransitionStatesAndProbs(st, ac)))
-                    print " SUM == ", s
                     q.append(s)
 
                 max_q = max(q) if (len(q) > 0) else 0
                 self.values[st] = max_q
-                # print " q: {}, max(q)={}, max_action={}".format(q, max_q, max_ac)
-        print " values: ", self.values
 
 
     def getValue(self, state):
@@ -89,13 +77,12 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        print " Computing Q value for state = {}, action = {} ".format(state, action)
+        # util.raiseNotDefined()
         s = 0
         for ns, p in self.mdp.getTransitionStatesAndProbs(state, action):
             r = self.mdp.getReward(state, action, ns)
             s += p * (r + self.discount * self.values[ns])
         return s
-        # util.raiseNotDefined()
 
     def computeActionFromValues(self, state):
         """
@@ -108,32 +95,18 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
-        print " Computing action for state ", state
 
         max_action = None
         max_value = -sys.maxint
-
         for action in self.mdp.getPossibleActions(state):
             for ns, _ in self.mdp.getTransitionStatesAndProbs(state, action):
-                print " ns={}, v={}".format(ns, self.values[ns])
-
                 if self.values[ns] > max_value:
                     max_value = self.values[ns]
                     max_action = action
 
-
-        print " A = {}, V = {}".format(max_action, max_value)
         if self.mdp.isTerminal(state):
             return None
-
         return max_action
-
-        # if state not in self.actions:
-        #     return None
-        #     print " {} Not Found!".format(state)
-        #
-        # return self.actions[state]
-        # return 'north'
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
