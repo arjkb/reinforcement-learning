@@ -113,16 +113,15 @@ class ValueIterationAgent(ValueEstimationAgent):
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
 
+        if self.mdp.isTerminal(state):
+            return None
+
         max_action = None
         max_value = -sys.maxint
         for action in self.mdp.getPossibleActions(state):
-            for ns, _ in self.mdp.getTransitionStatesAndProbs(state, action):
-                if self.values[ns] > max_value:
-                    max_value = self.values[ns]
-                    max_action = action
-
-        if self.mdp.isTerminal(state):
-            return None
+            q = self.computeQValueFromValues(state, action)
+            if q > max_value:
+                max_value, max_action = q, action
         return max_action
 
     def getPolicy(self, state):
