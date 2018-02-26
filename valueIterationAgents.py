@@ -57,10 +57,7 @@ class ValueIterationAgent(ValueEstimationAgent):
             for st in self.mdp.getStates():
                 q = list()
                 for ac in self.mdp.getPossibleActions(st):
-                    s = 0
-                    for ns, p in self.mdp.getTransitionStatesAndProbs(st, ac):
-                        s += p * (r(st, ac, ns) + d*self.old_values[ns])
-                    # s = sum(map(lambda (ns, p): p * (r(st, ac, ns) + d * self.values[ns]) , self.mdp.getTransitionStatesAndProbs(st, ac)))
+                    s = sum(map(lambda (ns, p): p * (r(st, ac, ns) + d * self.old_values[ns]) , self.mdp.getTransitionStatesAndProbs(st, ac)))
                     q.append(s)
 
                 max_q = max(q) if (len(q) > 0) else 0
