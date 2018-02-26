@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -13,6 +13,9 @@
 
 
 import mdp, util
+
+import sys
+import copy
 
 from learningAgents import ValueEstimationAgent
 
@@ -42,10 +45,41 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.discount = discount
         self.iterations = iterations
         self.values = util.Counter() # A Counter is a dict with default 0
+        self.old_values = util.Counter() # to store values from "previous" iteration
+
+        self.actions = dict()
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
+        d = self.discount
+        r = self.mdp.getReward
+        # print " Discount: ", d
+        for i in range(self.iterations):
+            # q = list()
+            for st in self.mdp.getStates():
+                q = list()
+                # print "{}".format(self.mdp.getTransitionStatesAndProbs(st, ac)
+                for ac in self.mdp.getPossibleActions(st):
+                    # print " possible actions ({}): {}".format(st, self.mdp.getPossibleActions(st))
+                    # print "{}".format(self.mdp.getTransitionStatesAndProbs(st, ac))
+                    s = 0
+                    for ns, p in self.mdp.getTransitionStatesAndProbs(st, ac):
+                        s += p * (r(st, ac, ns) + d*self.old_values[ns])
+                        # print "r({}, {}, {}) = {}, P = {}".format(st, ac, ns, r(st, ac, ns), p)
+                        # print " p = {}".format(p)
+                        # print " r = {}".format(r(st, ac, ns))
+                        # print " d = {}".format(d)
+                        # print " self.values[ns] = {}".format(self.values[ns])
+                        # print " temp sum = {}".format(p * (r(st, ac, ns) + d*self.values[ns]))
+                    # s = sum(map(lambda (ns, p): p * (r(st, ac, ns) + d * self.values[ns]) , self.mdp.getTransitionStatesAndProbs(st, ac)))
+                    q.append(s)
 
+                max_q = max(q) if (len(q) > 0) else 0
+                self.values[st] = max_q
+                # print "Value at ({}) = {}".format(st, self.values[st])
+
+            # copy current values into old_values (for next iteration)
+            self.old_values = copy.deepcopy(self.values)
 
     def getValue(self, state):
         """
@@ -60,7 +94,12 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
+        s = 0
+        for ns, p in self.mdp.getTransitionStatesAndProbs(state, action):
+            r = self.mdp.getReward(state, action, ns)
+            s += p * (r + self.discount * self.values[ns])
+        return s
 
     def computeActionFromValues(self, state):
         """
@@ -72,7 +111,18 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
+
+        if self.mdp.isTerminal(state):
+            return None
+
+        max_action = None
+        max_value = -sys.maxint
+        for action in self.mdp.getPossibleActions(state):
+            q = self.computeQValueFromValues(state, action)
+            if q > max_value:
+                max_value, max_action = q, action
+        return max_action
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
