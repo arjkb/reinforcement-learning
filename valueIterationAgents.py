@@ -15,6 +15,7 @@
 import mdp, util
 
 import sys
+import copy
 
 from learningAgents import ValueEstimationAgent
 
@@ -44,6 +45,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.discount = discount
         self.iterations = iterations
         self.values = util.Counter() # A Counter is a dict with default 0
+        self.old_values = util.Counter() # to store values from "previous" iteration
 
         self.actions = dict()
 
@@ -62,7 +64,7 @@ class ValueIterationAgent(ValueEstimationAgent):
                     # print "{}".format(self.mdp.getTransitionStatesAndProbs(st, ac))
                     s = 0
                     for ns, p in self.mdp.getTransitionStatesAndProbs(st, ac):
-                        s += p * (r(st, ac, ns) + d*self.values[ns])
+                        s += p * (r(st, ac, ns) + d*self.old_values[ns])
                         print "r({}, {}, {}) = {}, P = {}".format(st, ac, ns, r(st, ac, ns), p)
                         print " p = {}".format(p)
                         print " r = {}".format(r(st, ac, ns))
@@ -76,6 +78,8 @@ class ValueIterationAgent(ValueEstimationAgent):
                 self.values[st] = max_q
                 print "Value at ({}) = {}".format(st, self.values[st])
 
+            # copy current values into old_values (for next iteration)
+            self.old_values = copy.deepcopy(self.values)
 
     def getValue(self, state):
         """
