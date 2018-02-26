@@ -15,6 +15,7 @@
 import mdp, util
 
 import sys
+import copy
 
 from learningAgents import ValueEstimationAgent
 
@@ -44,6 +45,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.discount = discount
         self.iterations = iterations
         self.values = util.Counter() # A Counter is a dict with default 0
+        self.old_values = util.Counter() # to store values from "previous" iteration
 
         self.actions = dict()
 
@@ -51,7 +53,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         "*** YOUR CODE HERE ***"
         d = self.discount
         r = self.mdp.getReward
-        print " Discount: ", d
+        # print " Discount: ", d
         for i in range(self.iterations):
             # q = list()
             for st in self.mdp.getStates():
@@ -62,20 +64,22 @@ class ValueIterationAgent(ValueEstimationAgent):
                     # print "{}".format(self.mdp.getTransitionStatesAndProbs(st, ac))
                     s = 0
                     for ns, p in self.mdp.getTransitionStatesAndProbs(st, ac):
-                        s += p * (r(st, ac, ns) + d*self.values[ns])
-                        print "r({}, {}, {}) = {}, P = {}".format(st, ac, ns, r(st, ac, ns), p)
-                        print " p = {}".format(p)
-                        print " r = {}".format(r(st, ac, ns))
-                        print " d = {}".format(d)
-                        print " self.values[ns] = {}".format(self.values[ns])
-                        print " temp sum = {}".format(p * (r(st, ac, ns) + d*self.values[ns]))
+                        s += p * (r(st, ac, ns) + d*self.old_values[ns])
+                        # print "r({}, {}, {}) = {}, P = {}".format(st, ac, ns, r(st, ac, ns), p)
+                        # print " p = {}".format(p)
+                        # print " r = {}".format(r(st, ac, ns))
+                        # print " d = {}".format(d)
+                        # print " self.values[ns] = {}".format(self.values[ns])
+                        # print " temp sum = {}".format(p * (r(st, ac, ns) + d*self.values[ns]))
                     # s = sum(map(lambda (ns, p): p * (r(st, ac, ns) + d * self.values[ns]) , self.mdp.getTransitionStatesAndProbs(st, ac)))
                     q.append(s)
 
                 max_q = max(q) if (len(q) > 0) else 0
                 self.values[st] = max_q
-                print "Value at ({}) = {}".format(st, self.values[st])
+                # print "Value at ({}) = {}".format(st, self.values[st])
 
+            # copy current values into old_values (for next iteration)
+            self.old_values = copy.deepcopy(self.values)
 
     def getValue(self, state):
         """
@@ -109,16 +113,15 @@ class ValueIterationAgent(ValueEstimationAgent):
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
 
+        if self.mdp.isTerminal(state):
+            return None
+
         max_action = None
         max_value = -sys.maxint
         for action in self.mdp.getPossibleActions(state):
-            for ns, _ in self.mdp.getTransitionStatesAndProbs(state, action):
-                if self.values[ns] > max_value:
-                    max_value = self.values[ns]
-                    max_action = action
-
-        if self.mdp.isTerminal(state):
-            return None
+            q = self.computeQValueFromValues(state, action)
+            if q > max_value:
+                max_value, max_action = q, action
         return max_action
 
     def getPolicy(self, state):
