@@ -126,10 +126,10 @@ class QLearningAgent(ReinforcementAgent):
         # util.raiseNotDefined()
         max_action = None
         max_q = -sys.maxint
-        for action in self.getLegalActions(nextState):
-            q = self.getQValue(nextState, action)
+        for ac in self.getLegalActions(nextState):
+            q = self.getQValue(nextState, ac)
             if q > max_q:
-                max_q, max_action = q, action
+                max_q, max_action = q, ac
 
         sample_estimate = reward + self.discount * self.old_qvalue[(nextState, max_action)]
         self.qvalues[(state, action)] = (1 - self.alpha) * self.old_qvalue[(state, action)]  + self.alpha * sample_estimate
