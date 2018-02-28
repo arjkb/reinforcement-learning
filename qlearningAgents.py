@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -17,6 +17,8 @@ from learningAgents import ReinforcementAgent
 from featureExtractors import *
 
 import random,util,math
+
+import sys
 
 class QLearningAgent(ReinforcementAgent):
     """
@@ -43,6 +45,7 @@ class QLearningAgent(ReinforcementAgent):
         ReinforcementAgent.__init__(self, **args)
 
         "*** YOUR CODE HERE ***"
+        qvalues = util.Counter()
 
     def getQValue(self, state, action):
         """
@@ -102,7 +105,16 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
+        max_action = None
+        max_q = -sys.maxint
+        for action in self.getLegalActions(nextState):
+            q = self.getQValue(nextState, action)
+            if q > max_q:
+                max_q, max_action = q, action
+
+        sample_estimate = reward + self.discount * old_value[(nextState, max_action)]
+        qvalues[(state, action)] = (1 - self.alpha) * old_value[(state, action)]  + self.alpha * sample_estimate
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
