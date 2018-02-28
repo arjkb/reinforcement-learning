@@ -194,6 +194,9 @@ class ApproximateQAgent(PacmanQAgent):
         """
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
+        if state == 'TERMINAL_STATE': # to handle a corner condition
+            return self.qvalues[(state, action)]
+
         f = self.featExtractor.getFeatures(state, action)
 
         s = 0
