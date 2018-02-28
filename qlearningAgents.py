@@ -200,7 +200,8 @@ class ApproximateQAgent(PacmanQAgent):
         print "({}, {}) = {}, {}".format(state, action, f, f[(state, action)])
 
         s = f[(state, action)] * self.weights[(state, action)]
-        return s
+        self.qvalues[(state, action)] = s
+        return self.qvalues[(state, action)]
 
     def update(self, state, action, nextState, reward):
         """
