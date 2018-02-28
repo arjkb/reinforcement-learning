@@ -80,7 +80,15 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
+        max_q = -sys.maxint
+        max_action = None
+        for action in self.getLegalActions(state):
+            q = self.getQValue(state, action)
+            if q > max_q:
+                max_q, max_action = q, action
+        return max_action # would return None if there were no legal actions
+
 
     def getAction(self, state):
         """
