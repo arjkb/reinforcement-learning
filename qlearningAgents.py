@@ -46,6 +46,7 @@ class QLearningAgent(ReinforcementAgent):
 
         "*** YOUR CODE HERE ***"
         self.qvalues = util.Counter()
+        self.old_qvalue = util.Counter()
 
     def getQValue(self, state, action):
         """
@@ -115,7 +116,7 @@ class QLearningAgent(ReinforcementAgent):
                 max_q, max_action = q, action
 
         sample_estimate = reward + self.discount * old_value[(nextState, max_action)]
-        self.qvalues[(state, action)] = (1 - self.alpha) * old_value[(state, action)]  + self.alpha * sample_estimate
+        self.qvalues[(state, action)] = (1 - self.alpha) * self.old_qvalue[(state, action)]  + self.alpha * sample_estimate
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
