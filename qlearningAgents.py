@@ -119,7 +119,7 @@ class QLearningAgent(ReinforcementAgent):
             if q > max_q:
                 max_q, max_action = q, action
 
-        sample_estimate = reward + self.discount * old_value[(nextState, max_action)]
+        sample_estimate = reward + self.discount * self.old_qvalue[(nextState, max_action)]
         self.qvalues[(state, action)] = (1 - self.alpha) * self.old_qvalue[(state, action)]  + self.alpha * sample_estimate
 
     def getPolicy(self, state):
