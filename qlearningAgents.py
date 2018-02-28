@@ -197,7 +197,7 @@ class ApproximateQAgent(PacmanQAgent):
         s = 0
         # print self.featExtractor.getFeatures(state, action)
         f = self.featExtractor.getFeatures(state, action)
-        print "({}, {}) = {}, {}".format(state, action, f, f[(state, action)])
+        # print "({}, {}) = {}, {}".format(state, action, f, f[(state, action)])
 
         s = f[(state, action)] * self.weights[(state, action)]
         self.qvalues[(state, action)] = s
@@ -211,13 +211,13 @@ class ApproximateQAgent(PacmanQAgent):
         # util.raiseNotDefined()
         max_q = -sys.maxint
         max_action = None
-        for ac in self.getLegalActions(state):
-            q = self.getQValue(state, ac)
+        for ac in self.getLegalActions(nextState):
+            q = self.getQValue(nextState, ac)
             if q > max_q:
                 max_q, max_action = q, ac
 
 
-        difference = (reward + self.discount * self.getQValue(state, max_action)) - self.getQValue(state, action)
+        difference = (reward + self.discount * self.getQValue(nextState, max_action)) - self.getQValue(state, action)
         f = self.featExtractor.getFeatures(state, action)
         # for f in self.featExtractor.getFeatures(state, action):
             # self.weights[f] = self.weights[f] + self.alpha * difference * f
