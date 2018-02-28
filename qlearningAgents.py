@@ -199,7 +199,16 @@ class ApproximateQAgent(PacmanQAgent):
         f = self.featExtractor.getFeatures(state, action)
         # print "({}, {}) = {}, {}".format(state, action, f, f[(state, action)])
 
-        s = f[(state, action)] * self.weights[(state, action)]
+        for feature in f:
+            value = f[feature]
+            # print feature, value
+            s += value * self.weights[feature]
+
+        # for k in f:
+            # s += f[k] * self.weights[f[k]]
+
+
+        # s = f[(state, action)] * self.weights[(state, action)]
         self.qvalues[(state, action)] = s
         return self.qvalues[(state, action)]
 
