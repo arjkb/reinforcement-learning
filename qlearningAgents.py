@@ -194,21 +194,12 @@ class ApproximateQAgent(PacmanQAgent):
         """
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
-        s = 0
-        # print self.featExtractor.getFeatures(state, action)
         f = self.featExtractor.getFeatures(state, action)
-        # print "({}, {}) = {}, {}".format(state, action, f, f[(state, action)])
 
+        s = 0
         for feature in f:
             value = f[feature]
-            # print feature, value
             s += value * self.weights[feature]
-
-        # for k in f:
-            # s += f[k] * self.weights[f[k]]
-
-
-        # s = f[(state, action)] * self.weights[(state, action)]
         self.qvalues[(state, action)] = s
         return self.qvalues[(state, action)]
 
@@ -225,14 +216,11 @@ class ApproximateQAgent(PacmanQAgent):
             if q > max_q:
                 max_q, max_action = q, ac
 
-
         difference = (reward + self.discount * self.getQValue(nextState, max_action)) - self.getQValue(state, action)
         f = self.featExtractor.getFeatures(state, action)
-        # for f in self.featExtractor.getFeatures(state, action):
-            # self.weights[f] = self.weights[f] + self.alpha * difference * f
-        # for k in f:
-        #     self.weights[k] = self.weights[k] + self.alpha * difference * f[k]
-        self.weights[(state, action)] = self.weights[(state, action)] + self.alpha * difference * f[(state, action)]
+        for feature in f:
+            value = f[feature]
+            self.weights[feature] = self.weights[feature] + self.alpha * difference * value
 
     def final(self, state):
         "Called at the end of each game."
