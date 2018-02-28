@@ -68,6 +68,10 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
+        legalActions = self.getLegalActions(state)
+        if len(legalActions) == 0:
+            return 0.0
+
         q_list = list()
         for action in self.getLegalActions(state):
             q_list.append(self.getQValue(state, action))
