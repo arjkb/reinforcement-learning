@@ -193,7 +193,19 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
+        s = 0
+        # print self.featExtractor.getFeatures(state, action)
+        f = self.featExtractor.getFeatures(state, action)
+        # for k in f:
+        #     print k, f[k]
+        # for k in self.featExtractor.getFeatures(state, action):
+        for k in f:
+            # print f, f[k], self.weights[k]
+        # #     s += s
+            s += f[k] * self.weights[k]
+        # print s
+        return s
 
     def update(self, state, action, nextState, reward):
         """
@@ -208,10 +220,13 @@ class ApproximateQAgent(PacmanQAgent):
             if q > max_q:
                 max_q, max_action = q, ac
 
-        difference = (reward + self.discount * self.getQValue(state, max_action)) - self.getQValue(state, action)
 
-        for f in self.featExtractor.getFeatures(state, action):
-            w[f] = w[f] + self.alpha * difference * f
+                difference = (reward + self.discount * self.getQValue(state, max_action)) - self.getQValue(state, action)
+        f = self.featExtractor.getFeatures(state, action)
+        # for f in self.featExtractor.getFeatures(state, action):
+            # self.weights[f] = self.weights[f] + self.alpha * difference * f
+        for k in f:
+            self.weights[k] = self.weights[k] + self.alpha * difference * f[k]
 
     def final(self, state):
         "Called at the end of each game."
