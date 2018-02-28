@@ -51,8 +51,6 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
-        d = self.discount
-        r = self.mdp.getReward
         for i in range(self.iterations):
             for st in self.mdp.getStates():
                 max_q = max(map(lambda ac: self.computeQValueFromValues(st, ac), self.mdp.getPossibleActions(st)) or [0])
