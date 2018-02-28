@@ -68,9 +68,7 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
-        q_list = list()
-        map(lambda ac: q_list.append(self.getQValue(state, ac)), self.getLegalActions(state))
-        return max(q_list) if (len(q_list)) > 0 else 0
+        return max(map(lambda ac: self.getQValue(state, ac), self.getLegalActions(state)) or [0])
 
     def computeActionFromQValues(self, state):
         """
@@ -105,10 +103,7 @@ class QLearningAgent(ReinforcementAgent):
         action = None
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
-        if util.flipCoin(self.epsilon):
-            return random.choice(legalActions)
-        else:
-            return self.computeActionFromQValues(state)
+        return random.choice(legalActions) if util.flipCoin(self.epsilon) else self.computeActionFromQValues(state)
 
     def update(self, state, action, nextState, reward):
         """

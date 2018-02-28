@@ -51,16 +51,9 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
-        d = self.discount
-        r = self.mdp.getReward
         for i in range(self.iterations):
             for st in self.mdp.getStates():
-                q = list()
-                for ac in self.mdp.getPossibleActions(st):
-                    s = sum(map(lambda (ns, p): p * (r(st, ac, ns) + d * self.old_values[ns]) , self.mdp.getTransitionStatesAndProbs(st, ac)))
-                    q.append(s)
-
-                max_q = max(q) if (len(q) > 0) else 0
+                max_q = max(map(lambda ac: self.computeQValueFromValues(st, ac), self.mdp.getPossibleActions(st)) or [0])
                 self.values[st] = max_q
 
             # copy current values into old_values (for next iteration)
@@ -80,11 +73,9 @@ class ValueIterationAgent(ValueEstimationAgent):
         """
         "*** YOUR CODE HERE ***"
         # util.raiseNotDefined()
-        s = 0
-        for ns, p in self.mdp.getTransitionStatesAndProbs(state, action):
-            r = self.mdp.getReward(state, action, ns)
-            s += p * (r + self.discount * self.values[ns])
-        return s
+        d = self.discount
+        r = self.mdp.getReward
+        return sum(map(lambda (ns, p): p * (r(state, action, ns) + d * self.old_values[ns]) , self.mdp.getTransitionStatesAndProbs(state, action)))
 
     def computeActionFromValues(self, state):
         """
